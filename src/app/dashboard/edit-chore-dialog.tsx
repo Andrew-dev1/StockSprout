@@ -62,7 +62,7 @@ export function EditChoreDialog({ chore }: { chore: Chore }) {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error?.formErrors?.[0] ?? "Something went wrong");
+        setError(data.error?.[0]?.message ?? "Something went wrong");
         return;
       }
 
