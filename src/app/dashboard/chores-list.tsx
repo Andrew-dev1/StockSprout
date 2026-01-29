@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { EditChoreDialog } from "./edit-chore-dialog";
 
 interface Chore {
   id: string;
@@ -25,13 +26,16 @@ export function ChoresList({ chores }: { chores: Chore[] }) {
       {chores.map((chore) => (
         <Card key={chore.id}>
           <CardContent className="pt-4">
-            <div className="flex items-center gap-2">
-              <p className="font-medium">{chore.title}</p>
-              {chore.isRecurring && (
-                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                  Recurring
-                </span>
-              )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <p className="font-medium">{chore.title}</p>
+                {chore.isRecurring && (
+                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                    Recurring
+                  </span>
+                )}
+              </div>
+              <EditChoreDialog chore={chore} />
             </div>
             {chore.description && (
               <p className="text-sm text-muted-foreground">
