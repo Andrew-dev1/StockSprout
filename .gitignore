@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+#claude
+claude-output.txt
+claude.md
+
+# prisma generated client
+/src/generated/prisma
+
+# project docs (spec files, not for repo)
+/docs/
+
+# Word temp files
+~$*
+
+# clerk configuration (can include secrets)
+/.clerk/

@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-ts"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER & FAMILY MODELS
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique // Clerk user ID
+  email     String   @unique
+  firstName String
+  lastName  String
+  role      UserRole
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Family relationships
+  familyId String?
+  family   Family? @relation(fields: [familyId], references: [id])
+
+  // Parent-specific relations
+  createdChores      Chore[]           @relation("CreatedByParent")
+  approvedChores     ChoreAssignment[] @relation("ApprovedByParent")
+  approvedCashOuts   CashOutRequest[]  @relation("ApprovedByParent")
+
+  // Child-specific relations
+  balance            Decimal           @default(0) @db.Decimal(10, 2) // USD balance
+  assignedChores     ChoreAssignment[] @relation("AssignedToChild")
+  holdings           Holding[]
+  transactions       Transaction[]
+  cashOutRequests    CashOutRequest[]  @relation("RequestedByChild")
+
+  @@index([clerkId])
+  @@index([familyId])
+}
+
+model Family {
+  id              String   @id @default(cuid())
+  name            String
+  autoApproveChores Boolean @default(false) // Optional auto-approve feature
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  members User[]
+  chores  Chore[]
+}
+
+enum UserRole {
+  PARENT
+  CHILD
+}
+
+// ============================================
+// CHORE SYSTEM
+// ============================================
+
+model Chore {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  reward      Decimal  @db.Decimal(10, 2) // USD reward amount
+  isRecurring Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  familyId    String
+  family      Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdById String
+  createdBy   User   @relation("CreatedByParent", fields: [createdById], references: [id])
+
+  assignments ChoreAssignment[]
+
+  @@index([familyId])
+}
+
+model ChoreAssignment {
+  id          String           @id @default(cuid())
+  status      ChoreStatus      @default(PENDING)
+  dueDate     DateTime?
+  completedAt DateTime?
+  approvedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  choreId      String
+  chore        Chore  @relation(fields: [choreId], references: [id], onDelete: Cascade)
+  assignedToId String
+  assignedTo   User   @relation("AssignedToChild", fields: [assignedToId], references: [id])
+  approvedById String?
+  approvedBy   User?  @relation("ApprovedByParent", fields: [approvedById], references: [id])
+
+  // Link to the resulting transaction when approved
+  transaction Transaction?
+
+  @@index([assignedToId])
+  @@index([choreId])
+  @@index([status])
+}
+
+enum ChoreStatus {
+  PENDING           // Assigned but not started
+  SUBMITTED         // Child marked as done, awaiting approval
+  APPROVED          // Parent approved, money credited
+  REJECTED          // Parent rejected
+}
+
+// ============================================
+// STOCK & PORTFOLIO MODELS
+// ============================================
+
+model Stock {
+  id          String   @id @default(cuid())
+  ticker      String   @unique
+  name        String
+  logoUrl     String?
+  isActive    Boolean  @default(true) // Can be traded
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  prices      StockPrice[]
+  holdings    Holding[]
+  transactions Transaction[]
+
+  @@index([ticker])
+}
+
+model StockPrice {
+  id        String   @id @default(cuid())
+  price     Decimal  @db.Decimal(10, 2) // Last close price in USD
+  date      DateTime @db.Date           // Trading date
+  createdAt DateTime @default(now())
+
+  stockId String
+  stock   Stock  @relation(fields: [stockId], references: [id], onDelete: Cascade)
+
+  @@unique([stockId, date]) // One price per stock per day
+  @@index([stockId])
+  @@index([date])
+}
+
+model Holding {
+  id        String   @id @default(cuid())
+  shares    Decimal  @db.Decimal(16, 6) // Fractional shares (6 decimals for math)
+  costBasis Decimal  @db.Decimal(10, 2) // Total amount paid (for gain calculations)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stockId String
+  stock   Stock  @relation(fields: [stockId], references: [id])
+
+  @@unique([userId, stockId]) // One holding record per user per stock
+  @@index([userId])
+}
+
+// ============================================
+// TRANSACTION HISTORY
+// ============================================
+
+model Transaction {
+  id          String          @id @default(cuid())
+  type        TransactionType
+  amount      Decimal         @db.Decimal(10, 2) // USD amount
+  shares      Decimal?        @db.Decimal(16, 6) // For stock transactions
+  pricePerShare Decimal?      @db.Decimal(10, 2) // Price at time of trade
+  description String?
+  createdAt   DateTime        @default(now())
+
+  // Relations
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stockId String?
+  stock   Stock? @relation(fields: [stockId], references: [id])
+
+  // Link back to chore assignment (if CHORE_EARNING)
+  choreAssignmentId String?          @unique
+  choreAssignment   ChoreAssignment? @relation(fields: [choreAssignmentId], references: [id])
+
+  // Link to cash out request (if CASH_OUT)
+  cashOutRequestId String?         @unique
+  cashOutRequest   CashOutRequest? @relation(fields: [cashOutRequestId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+enum TransactionType {
+  CHORE_EARNING  // Money from completed chore
+  STOCK_BUY      // Bought stock
+  STOCK_SELL     // Sold stock
+  CASH_OUT       // Withdrew gains
+  PARENT_DEPOSIT // Parent added money directly
+}
+
+// ============================================
+// CASH OUT SYSTEM (Gains Only)
+// ============================================
+
+model CashOutRequest {
+  id          String          @id @default(cuid())
+  amount      Decimal         @db.Decimal(10, 2) // Requested amount (rounded to $5)
+  status      CashOutStatus   @default(PENDING)
+  requestedAt DateTime        @default(now())
+  processedAt DateTime?
+
+  // Relations
+  requestedById String
+  requestedBy   User   @relation("RequestedByChild", fields: [requestedById], references: [id])
+  approvedById  String?
+  approvedBy    User?  @relation("ApprovedByParent", fields: [approvedById], references: [id])
+
+  transaction Transaction?
+
+  @@index([requestedById])
+  @@index([status])
+}
+
+enum CashOutStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
