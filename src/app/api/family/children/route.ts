@@ -28,7 +28,13 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json(children);
+  const serialized = children.map((c) => ({
+    ...c,
+    balance: c.balance.toString(),
+    createdAt: c.createdAt.toISOString(),
+  }));
+
+  return NextResponse.json(serialized);
 }
 
 export async function POST(request: Request) {

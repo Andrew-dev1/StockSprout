@@ -18,6 +18,7 @@ model User {
   firstName String
   lastName  String
   role      UserRole
+  pin       String?   // Hashed 6-digit PIN (children only, for child login)
   avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

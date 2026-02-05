@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +23,7 @@ interface Chore {
 }
 
 export function EditChoreDialog({ chore }: { chore: Chore }) {
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(chore.title);
   const [description, setDescription] = useState(chore.description ?? "");
@@ -67,7 +67,7 @@ export function EditChoreDialog({ chore }: { chore: Chore }) {
       }
 
       setOpen(false);
-      router.refresh();
+      queryClient.invalidateQueries({ queryKey: ["chores"] });
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

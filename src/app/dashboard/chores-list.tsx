@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { EditChoreDialog } from "./edit-chore-dialog";
+import { AssignChoreDialog } from "./assign-chore-dialog";
 
 interface Chore {
   id: string;
@@ -12,7 +13,19 @@ interface Chore {
   createdAt: string;
 }
 
-export function ChoresList({ chores }: { chores: Chore[] }) {
+interface Child {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
+export function ChoresList({
+  chores,
+  children,
+}: {
+  chores: Chore[];
+  children: Child[];
+}) {
   if (chores.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -35,7 +48,14 @@ export function ChoresList({ chores }: { chores: Chore[] }) {
                   </span>
                 )}
               </div>
-              <EditChoreDialog chore={chore} />
+              <div className="flex gap-1">
+                <AssignChoreDialog
+                  choreId={chore.id}
+                  choreTitle={chore.title}
+                  children={children}
+                />
+                <EditChoreDialog chore={chore} />
+              </div>
             </div>
             {chore.description && (
               <p className="text-sm text-muted-foreground">
