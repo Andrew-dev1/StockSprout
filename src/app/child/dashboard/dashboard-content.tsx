@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChildChoresList } from "./chores-list";
 import { PortfolioHoldings } from "@/components/portfolio-holdings";
+import { TransactionHistory } from "@/components/transaction-history";
 
 interface Assignment {
   id: string;
@@ -70,6 +71,10 @@ export function ChildDashboardContent({ balance }: { balance: string }) {
 
       <div className="mb-6">
         <PortfolioHoldings />
+      </div>
+
+      <div className="mb-6">
+        <TransactionHistory />
       </div>
 
       <div className="space-y-6">
