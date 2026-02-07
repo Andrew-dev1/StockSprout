@@ -55,20 +55,7 @@ export function PortfolioChart() {
     );
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Portfolio Performance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-red-500">Failed to load chart</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!snapshots || snapshots.length === 0) {
+  if (error || !snapshots || snapshots.length === 0) {
     return (
       <Card>
         <CardHeader>
