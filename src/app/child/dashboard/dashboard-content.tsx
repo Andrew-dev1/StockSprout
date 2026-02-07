@@ -6,6 +6,7 @@ import { ChildChoresList } from "./chores-list";
 import { PortfolioHoldings } from "@/components/portfolio-holdings";
 import { PortfolioChart } from "@/components/portfolio-chart";
 import { TransactionHistory } from "@/components/transaction-history";
+import { CashoutForm } from "@/components/cashout-form";
 
 interface Assignment {
   id: string;
@@ -76,6 +77,10 @@ export function ChildDashboardContent({ balance }: { balance: string }) {
 
       <div className="mb-6">
         <PortfolioChart />
+      </div>
+
+      <div className="mb-6">
+        <CashoutForm />
       </div>
 
       <div className="mb-6">

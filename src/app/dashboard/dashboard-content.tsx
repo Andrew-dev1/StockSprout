@@ -9,6 +9,7 @@ import { AddChoreDialog } from "./add-chore-dialog";
 import { PendingApprovals } from "./pending-approvals";
 import { FamilyOverview } from "@/components/family-overview";
 import { ChildrenOverview } from "@/components/children-overview";
+import { PendingCashouts } from "@/components/pending-cashouts";
 
 interface Child {
   id: string;
@@ -136,6 +137,8 @@ export function DashboardContent({
             )}
           </CardContent>
         </Card>
+
+        <PendingCashouts />
       </div>
     </div>
   );
