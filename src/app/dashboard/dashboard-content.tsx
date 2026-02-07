@@ -7,6 +7,8 @@ import { AddChildDialog } from "./add-child-dialog";
 import { ChoresList } from "./chores-list";
 import { AddChoreDialog } from "./add-chore-dialog";
 import { PendingApprovals } from "./pending-approvals";
+import { FamilyOverview } from "@/components/family-overview";
+import { ChildrenOverview } from "@/components/children-overview";
 
 interface Child {
   id: string;
@@ -89,7 +91,11 @@ export function DashboardContent({
         <p className="text-muted-foreground">Welcome back, {parentFirstName}</p>
       </div>
 
+      <FamilyOverview />
+
       <div className="space-y-6">
+        <ChildrenOverview />
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Children</CardTitle>
