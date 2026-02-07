@@ -38,6 +38,7 @@ model User {
   holdings           Holding[]
   transactions       Transaction[]
   cashOutRequests    CashOutRequest[]  @relation("RequestedByChild")
+  portfolioSnapshots PortfolioSnapshot[]
 
   @@index([clerkId])
   @@index([familyId])
@@ -163,6 +164,22 @@ model Holding {
 
   @@unique([userId, stockId]) // One holding record per user per stock
   @@index([userId])
+}
+
+model PortfolioSnapshot {
+  id             String   @id @default(cuid())
+  date           DateTime @db.Date           // Snapshot date
+  portfolioValue Decimal  @db.Decimal(10, 2) // Total value of holdings
+  cashBalance    Decimal  @db.Decimal(10, 2) // Cash balance at time of snapshot
+  totalValue     Decimal  @db.Decimal(10, 2) // portfolioValue + cashBalance
+  createdAt      DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date]) // One snapshot per user per day
+  @@index([userId])
+  @@index([date])
 }
 
 // ============================================
