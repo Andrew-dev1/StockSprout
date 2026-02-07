@@ -17,8 +17,8 @@ export default async function ChildDashboardLayout({
         <div className="flex items-center gap-6">
           <p className="font-medium">Hi, {child.firstName}!</p>
           <nav className="flex items-center gap-4 text-sm">
-            <Link href="/child/dashboard" className="text-muted-foreground hover:text-foreground">
-              Chores
+            <Link href="/child/dashboard" className="font-semibold">
+              Dashboard
             </Link>
             <Link href="/stocks" className="text-muted-foreground hover:text-foreground">
               Stocks

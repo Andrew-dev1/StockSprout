@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { prisma } from "@/lib/db";
+import { cookies } from "next/headers";
 
 export default async function DashboardLayout({
   children,
@@ -11,6 +12,13 @@ export default async function DashboardLayout({
 }) {
   const clerkUser = await currentUser();
   if (!clerkUser) redirect("/");
+
+  // Check if child session exists, redirect to clear it first
+  const cookieStore = await cookies();
+  const hasChildSession = cookieStore.get("child_session");
+  if (hasChildSession) {
+    redirect("/api/child/logout?redirect=/dashboard");
+  }
 
   const dbUser = await prisma.user.findUnique({
     where: { clerkId: clerkUser.id },
