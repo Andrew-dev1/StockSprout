@@ -113,3 +113,116 @@ export function getTradeDate(timestamp?: number): Date {
   const today = new Date();
   return new Date(today.toISOString().split('T')[0] + 'T00:00:00Z');
 }
+
+export interface SymbolSearchResult {
+  count: number;
+  result: Array<{
+    description: string;  // Company name
+    displaySymbol: string;
+    symbol: string;
+    type: string;
+  }>;
+}
+
+export interface StockCandles {
+  c: number[];  // Close prices
+  h: number[];  // High prices
+  l: number[];  // Low prices
+  o: number[];  // Open prices
+  s: string;    // Status: "ok" or "no_data"
+  t: number[];  // Timestamps (Unix seconds)
+  v: number[];  // Volume
+}
+
+export interface MarketStatus {
+  exchange: string;
+  holiday: string | null;
+  isOpen: boolean;
+  session: string;
+  timezone: string;
+  t: number;
+}
+
+/**
+ * Search for stock symbols by query (company name or ticker)
+ */
+export async function searchSymbols(query: string): Promise<SymbolSearchResult | null> {
+  const apiKey = getFinnhubApiKey();
+  const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&token=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error(`Finnhub API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json() as SymbolSearchResult;
+    return data;
+  } catch (error) {
+    console.error("Error searching symbols:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch historical candle data for a stock
+ * @param ticker Stock symbol
+ * @param days Number of days of history (default 30)
+ */
+export async function fetchStockCandles(
+  ticker: string,
+  days: number = 30
+): Promise<StockCandles | null> {
+  const apiKey = getFinnhubApiKey();
+
+  // Calculate date range
+  const now = Math.floor(Date.now() / 1000);
+  const from = now - days * 24 * 60 * 60;
+
+  const url = `${BASE_URL}/stock/candle?symbol=${ticker}&resolution=D&from=${from}&to=${now}&token=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error(`Finnhub API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json() as StockCandles;
+
+    if (data.s !== "ok") {
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching stock candles:", error);
+    return null;
+  }
+}
+
+/**
+ * Get US market status (open/closed)
+ */
+export async function fetchMarketStatus(): Promise<MarketStatus | null> {
+  const apiKey = getFinnhubApiKey();
+  const url = `${BASE_URL}/stock/market-status?exchange=US&token=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.error(`Finnhub API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json() as MarketStatus;
+    return data;
+  } catch (error) {
+    console.error("Error fetching market status:", error);
+    return null;
+  }
+}
