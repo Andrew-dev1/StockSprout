@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EducationalTooltip } from "@/components/educational-tooltip";
 
 interface Holding {
   id: string;
@@ -91,7 +92,9 @@ export function PortfolioHoldings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Portfolio</CardTitle>
+        <CardTitle>
+          <EducationalTooltip term="portfolio">My Portfolio</EducationalTooltip>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Portfolio Summary */}
@@ -102,7 +105,9 @@ export function PortfolioHoldings() {
               <p className="text-xl font-bold">${totals.value.toFixed(2)}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Gain/Loss</p>
+              <p className="text-sm text-muted-foreground">
+                <EducationalTooltip term="gains">Total Gain/Loss</EducationalTooltip>
+              </p>
               <p
                 className={`text-xl font-bold ${
                   totals.gainLoss >= 0 ? "text-green-600" : "text-red-600"

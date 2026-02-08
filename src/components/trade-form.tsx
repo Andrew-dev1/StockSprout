@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EducationalTooltip } from "@/components/educational-tooltip";
 
 interface TradeFormProps {
   ticker: string;
@@ -110,7 +111,9 @@ export function TradeForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trade {ticker}</CardTitle>
+        <CardTitle>
+          <EducationalTooltip term="investing">Trade {ticker}</EducationalTooltip>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -123,7 +126,7 @@ export function TradeForm({
 
           <TabsContent value="buy" className="space-y-4">
             <div className="text-sm text-muted-foreground">
-              Available: ${balance.toFixed(2)}
+              <EducationalTooltip term="balance">Available:</EducationalTooltip> ${balance.toFixed(2)}
             </div>
 
             <div className="space-y-2">
@@ -147,7 +150,9 @@ export function TradeForm({
                   <span>${currentPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-medium">
-                  <span>Shares you&apos;ll get:</span>
+                  <EducationalTooltip term="fractional-shares">
+                    <span>Shares you&apos;ll get:</span>
+                  </EducationalTooltip>
                   <span>{sharesToBuy.toFixed(6)}</span>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EducationalTooltip } from "@/components/educational-tooltip";
 
 interface CashoutEligibility {
   eligibleAmount: number;
@@ -133,7 +134,9 @@ export function CashoutForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cash Out</CardTitle>
+        <CardTitle>
+          <EducationalTooltip term="cash-out">Cash Out</EducationalTooltip>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -141,7 +144,9 @@ export function CashoutForm() {
           <p className="text-2xl font-bold text-green-700">
             ${data.eligibleAmount.toFixed(2)}
           </p>
-          <p className="text-green-600 text-xs">Based on your investment gains</p>
+          <p className="text-green-600 text-xs">
+            <EducationalTooltip term="gains">Based on your investment gains</EducationalTooltip>
+          </p>
         </div>
 
         <div className="space-y-2">

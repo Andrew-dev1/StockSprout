@@ -7,6 +7,7 @@ import { PortfolioHoldings } from "@/components/portfolio-holdings";
 import { PortfolioChart } from "@/components/portfolio-chart";
 import { TransactionHistory } from "@/components/transaction-history";
 import { CashoutForm } from "@/components/cashout-form";
+import { EducationalTooltip } from "@/components/educational-tooltip";
 
 interface Assignment {
   id: string;
@@ -64,7 +65,9 @@ export function ChildDashboardContent({ balance }: { balance: string }) {
     <div className="mx-auto max-w-2xl p-6">
       <Card className="mb-6">
         <CardContent className="pt-4">
-          <p className="text-lg font-medium">Your Balance</p>
+          <p className="text-lg font-medium">
+            <EducationalTooltip term="balance">Your Balance</EducationalTooltip>
+          </p>
           <p className="text-3xl font-bold text-green-600">
             ${Number(balance).toFixed(2)}
           </p>
