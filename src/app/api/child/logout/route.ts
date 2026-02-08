@@ -10,5 +10,11 @@ export async function GET(request: Request) {
   await clearChildSession();
   const url = new URL(request.url);
   const redirectTo = url.searchParams.get("redirect") || "/";
-  return NextResponse.redirect(new URL(redirectTo, request.url));
+
+  // Prevent open redirect - only allow internal paths
+  const safePath = redirectTo.startsWith("/") && !redirectTo.startsWith("//")
+    ? redirectTo
+    : "/";
+
+  return NextResponse.redirect(new URL(safePath, request.url));
 }

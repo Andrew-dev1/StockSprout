@@ -1,6 +1,7 @@
 import { SignInButton, SignUpButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export default async function Home() {
   const user = await currentUser();
@@ -16,6 +17,9 @@ export default async function Home() {
           <p className="mb-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
             Learn to invest, one chore at a time.
           </p>
+          <p className="mb-4 text-center text-xs font-medium text-zinc-400 uppercase tracking-wide">
+            Parent Login
+          </p>
           <div className="flex flex-col gap-3">
             <SignInButton mode="modal">
               <button className="w-full rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700">
@@ -27,6 +31,14 @@ export default async function Home() {
                 Create Account
               </button>
             </SignUpButton>
+          </div>
+          <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+            <Link
+              href="/child-login"
+              className="block w-full text-center rounded-md bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700"
+            >
+              I&apos;m a Kid
+            </Link>
           </div>
         </div>
       </SignedOut>

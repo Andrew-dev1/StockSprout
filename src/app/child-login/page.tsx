@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,6 +89,14 @@ export default function ChildLoginPage() {
               {loading ? "Logging in..." : "Log In"}
             </Button>
           </form>
+          <div className="mt-6 pt-6 border-t text-center">
+            <Link
+              href="/"
+              className="text-sm text-zinc-500 hover:text-zinc-700"
+            >
+              I&apos;m a Parent
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

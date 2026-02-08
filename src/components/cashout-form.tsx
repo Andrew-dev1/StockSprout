@@ -69,8 +69,8 @@ export function CashoutForm() {
           <CardTitle>Cash Out</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Unable to load cash-out info.
+          <p className="text-sm text-red-500">
+            Failed to load cash-out info. Please refresh.
           </p>
         </CardContent>
       </Card>

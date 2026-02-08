@@ -18,6 +18,7 @@ export function StockSearch() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -35,11 +36,13 @@ export function StockSearch() {
     if (query.length < 1) {
       setResults([]);
       setIsOpen(false);
+      setError(false);
       return;
     }
 
     const timeoutId = setTimeout(async () => {
       setLoading(true);
+      setError(false);
       try {
         const res = await fetch(`/api/stocks/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
@@ -48,6 +51,7 @@ export function StockSearch() {
         setSelectedIndex(-1);
       } catch {
         setResults([]);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -104,6 +108,8 @@ export function StockSearch() {
         <Card className="absolute top-full left-0 right-0 mt-1 z-50 max-h-80 overflow-y-auto shadow-lg">
           {loading ? (
             <div className="p-3 text-sm text-muted-foreground">Searching...</div>
+          ) : error ? (
+            <div className="p-3 text-sm text-red-500">Failed to search. Please try again.</div>
           ) : results.length === 0 ? (
             <div className="p-3 text-sm text-muted-foreground">No results found</div>
           ) : (

@@ -142,11 +142,29 @@ export function StockDetail({
 
   const isPositive = stock.quote.change >= 0;
 
+  // Detect potential delisted/inactive stocks
+  const isPotentiallyDelisted =
+    stock.quote.current === 0 ||
+    (stock.priceHistory.length === 0 && !stock.isTracked);
+
   return (
     <div className="mx-auto max-w-4xl p-6">
       <div className="mb-6">
         <StockSearch />
       </div>
+
+      {/* Delisted Warning */}
+      {isPotentiallyDelisted && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-amber-600 text-lg">&#9888;</span>
+            <p className="text-sm text-amber-700 font-medium">
+              This stock may be delisted or inactive. Price data is unavailable or outdated.
+              Trading is not recommended.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stock Header */}
       <Card className="mb-6">
@@ -310,7 +328,15 @@ export function StockDetail({
       </Card>
 
       {/* Trade Section */}
-      {childData ? (
+      {isPotentiallyDelisted ? (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">
+              Trading is disabled for this stock due to missing price data.
+            </p>
+          </CardContent>
+        </Card>
+      ) : childData ? (
         <TradeForm
           ticker={ticker}
           currentPrice={stock.quote.previousClose}

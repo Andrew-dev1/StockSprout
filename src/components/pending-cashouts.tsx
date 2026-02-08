@@ -115,6 +115,11 @@ export function PendingCashouts() {
         <CardTitle>Pending Cash-Outs</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {mutation.isError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600">{mutation.error.message}</p>
+          </div>
+        )}
         {cashouts.map((request) => (
           <div
             key={request.id}

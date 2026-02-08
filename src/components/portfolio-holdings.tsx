@@ -118,35 +118,45 @@ export function PortfolioHoldings() {
 
         {/* Holdings List */}
         <div className="space-y-3">
-          {holdings.map((holding) => (
-            <Link
-              key={holding.id}
-              href={`/stocks/${holding.ticker}`}
-              className="block"
-            >
-              <div className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors">
-                <div>
-                  <p className="font-medium">{holding.ticker}</p>
-                  <p className="text-sm text-muted-foreground">{holding.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {holding.shares.toFixed(2)} shares @ $
-                    {holding.currentPrice.toFixed(2)}
-                  </p>
+          {holdings.map((holding) => {
+            const isDelisted = holding.currentPrice === 0;
+            return (
+              <Link
+                key={holding.id}
+                href={`/stocks/${holding.ticker}`}
+                className="block"
+              >
+                <div className={`flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors ${isDelisted ? "border-amber-300 bg-amber-50" : ""}`}>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{holding.ticker}</p>
+                      {isDelisted && (
+                        <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+                          No price data
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{holding.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {holding.shares.toFixed(2)} shares @ $
+                      {holding.currentPrice.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">${holding.currentValue.toFixed(2)}</p>
+                    <p
+                      className={`text-sm ${
+                        holding.gainLoss >= 0 ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {holding.gainLoss >= 0 ? "+" : ""}$
+                      {holding.gainLoss.toFixed(2)}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">${holding.currentValue.toFixed(2)}</p>
-                  <p
-                    className={`text-sm ${
-                      holding.gainLoss >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {holding.gainLoss >= 0 ? "+" : ""}$
-                    {holding.gainLoss.toFixed(2)}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         <Link
