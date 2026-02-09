@@ -8,6 +8,7 @@ import { PortfolioChart } from "@/components/portfolio-chart";
 import { TransactionHistory } from "@/components/transaction-history";
 import { CashoutForm } from "@/components/cashout-form";
 import { EducationalTooltip } from "@/components/educational-tooltip";
+import { WelcomeModal } from "@/components/welcome-modal";
 
 interface Assignment {
   id: string;
@@ -50,7 +51,13 @@ function serializeAssignments(
     }));
 }
 
-export function ChildDashboardContent({ balance }: { balance: string }) {
+export function ChildDashboardContent({
+  balance,
+  childName,
+}: {
+  balance: string;
+  childName: string;
+}) {
   const { data: assignments = [], isLoading } = useQuery({
     queryKey: ["childAssignments"],
     queryFn: fetchAssignments,
@@ -63,6 +70,7 @@ export function ChildDashboardContent({ balance }: { balance: string }) {
 
   return (
     <div className="mx-auto max-w-2xl p-6">
+      <WelcomeModal userType="child" userName={childName} />
       <Card className="mb-6">
         <CardContent className="pt-4">
           <p className="text-lg font-medium">

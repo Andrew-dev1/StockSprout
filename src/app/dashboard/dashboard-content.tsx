@@ -10,6 +10,7 @@ import { PendingApprovals } from "./pending-approvals";
 import { FamilyOverview } from "@/components/family-overview";
 import { ChildrenOverview } from "@/components/children-overview";
 import { PendingCashouts } from "@/components/pending-cashouts";
+import { WelcomeModal } from "@/components/welcome-modal";
 
 interface Child {
   id: string;
@@ -87,6 +88,7 @@ export function DashboardContent({
 
   return (
     <div className="mx-auto max-w-4xl p-6">
+      <WelcomeModal userType="parent" />
       <div className="mb-8">
         <h1 className="text-3xl font-bold">{familyName ?? "Dashboard"}</h1>
         <p className="text-muted-foreground">Welcome back, {parentFirstName}</p>

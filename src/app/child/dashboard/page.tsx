@@ -10,5 +10,10 @@ export default async function ChildDashboardPage() {
     redirect("/child-login");
   }
 
-  return <ChildDashboardContent balance={child.balance.toString()} />;
+  return (
+    <ChildDashboardContent
+      balance={child.balance.toString()}
+      childName={child.firstName}
+    />
+  );
 }
