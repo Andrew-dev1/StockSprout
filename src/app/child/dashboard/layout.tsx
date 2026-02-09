@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getChildSession } from "@/lib/child-auth";
 import { ChildLogoutButton } from "./logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function ChildDashboardLayout({
   children,
@@ -25,7 +26,10 @@ export default async function ChildDashboardLayout({
             </Link>
           </nav>
         </div>
-        <ChildLogoutButton />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <ChildLogoutButton />
+        </div>
       </header>
       {children}
     </div>
